@@ -1,0 +1,77 @@
+<meta charset="utf-8">
+<title>pdf-lib CJK — runnable example</title>
+<style>
+  body { max-width: 720px; margin: 40px auto; padding: 0 20px 60px;
+         font: 15px/1.7 system-ui, sans-serif; color: #24292f; }
+  h1 { font-size: 20px; }
+  textarea { width: 100%; height: 120px; padding: 10px 12px; font: 15px/1.6 inherit;
+             border: 1px solid #d0d7de; border-radius: 8px; box-sizing: border-box; }
+  button { padding: 10px 18px; font: inherit; font-weight: 600; border: 0;
+           border-radius: 9px; background: #2563eb; color: #fff; cursor: pointer; }
+  button[disabled] { opacity: .5; cursor: not-allowed; }
+  #log { margin-top: 16px; padding: 12px 14px; border-radius: 8px; background: #f6f8fa;
+         font: 13px/1.6 Consolas, monospace; white-space: pre-wrap; min-height: 22px; }
+  #log.bad { background: #dc262614; color: #dc2626; }
+  .note { color: #57606a; font-size: 13px; }
+  code { background: #eaeef2; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+</style>
+
+<h1>Write CJK into a PDF, in the browser</h1>
+
+<p class="note">
+  Serve this folder over HTTP (<code>python -m http.server</code>) — <code>fetch</code>
+  cannot read the font over <code>file://</code>. Put a prepared TrueType font at
+  <code>font.ttf</code> next to this page first; see <code>tools/prepare_font.py</code>.
+</p>
+
+<textarea id="text">中文字也畫得出來。
+日本語のかなと漢字も入ります。
+한국어도 됩니다.
+
+Mixed with English, 123, and punctuation：「」、。</textarea>
+
+<p><button id="go">Generate PDF</button></p>
+<div id="log"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<script src="../src/cjk.js"></script>
+<script>
+const log = (msg, bad) => {
+  const el = document.getElementById('log');
+  el.textContent = msg;
+  el.className = bad ? 'bad' : '';
+};
+
+document.getElementById('go').onclick = async (e) => {
+  const btn = e.target;
+  btn.disabled = true;
+  try {
+    log('embedding font…');
+    const t0 = performance.now();
+
+    const doc  = await PDFLib.PDFDocument.create();
+    const font = await embedCJK(doc, 'font.ttf');      // subset: true by default
+
+    const page = doc.addPage([595, 842]);              // A4
+    const lines = document.getElementById('text').value.split('\n');
+    let y = 780;
+    for (const line of lines) {
+      page.drawText(line, { font, size: 18, x: 50, y, color: PDFLib.rgb(0.1, 0.1, 0.1) });
+      y -= 30;
+    }
+
+    const bytes = await savePdf(doc);
+    const ms = Math.round(performance.now() - t0);
+
+    log('done in ' + ms + ' ms — ' + (bytes.length / 1024).toFixed(1) + ' KB\n' +
+        'That size is the whole point: the font on disk is several MB, but only\n' +
+        'the glyphs you actually drew were embedded.');
+    download(bytes, 'cjk.pdf');
+  } catch (err) {
+    log(String(err && err.message || err), true);
+  } finally {
+    btn.disabled = false;
+  }
+};
+</script>

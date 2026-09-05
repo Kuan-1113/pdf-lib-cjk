@@ -1,0 +1,12 @@
+# 字型不進版控:體積大,而且使用者應該用自己準備好的那份
+example/font.ttf
+*.ttf
+*.otf
+*.pdf
+
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.venv/
+node_modules/
