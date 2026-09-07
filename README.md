@@ -158,6 +158,21 @@ licensing here exists to serve.
 The Chrome-draws-nothing one is the expensive one, because text extraction and
 search both keep working — every check except looking at the page passes.
 
+## Related
+
+This runs inside a Chrome extension. If you are building one:
+
+- [**mv3-extension-starter**](https://github.com/Kuan-1113/mv3-extension-starter)
+  — an MV3 skeleton whose failure modes are already handled
+- [**chrome-ext-offline-license**](https://github.com/Kuan-1113/chrome-ext-offline-license)
+  — paid features with no licence server and no network permission
+- [**chrome-webstore-launch**](https://github.com/Kuan-1113/chrome-webstore-launch)
+  — store assets that upload, and a preflight that fails before the store does
+
+All MIT. The [paid kits](https://7568880033463.gumroad.com/l/nsoynq) are the
+written-down parts — the submission answers and the fulfilment plumbing — not
+the code, which stays here.
+
 ---
 
 MIT
