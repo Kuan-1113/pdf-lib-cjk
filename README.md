@@ -131,6 +131,33 @@ Chinese is partial, and Korean needs its own face.
 
 `tools/prepare_font.py` 處理字型,`src/cjk.js` 一個檔、沒有相依,複製進去就能用。
 
+## Running in production
+
+The code here is not a demo. It ships in two extensions on the Chrome Web Store:
+
+- [**Screenshot OCR — Chinese & Japanese, offline**](https://chromewebstore.google.com/detail/pgfnobkogofkjapcmaoekajipgpaknnm) — four Tesseract
+  language models bundled in the package, recognition in an offscreen document,
+  and no network permission at all.
+- [**PDF Editor — fill forms in Chinese, offline**](https://chromewebstore.google.com/detail/bmbnonjkhhaamehmkhjihcagalijcdoj) — pdf-lib with an
+  embedded, subsetted CJK font.
+
+Both are free with an optional one-time paid tier, which is what the offline
+licensing here exists to serve.
+
+## If you searched for one of these
+
+- `WinAnsiEncoding cannot encode "中"`
+- pdf-lib Chinese characters not showing / blank / invisible
+- PDF renders correctly in Acrobat but nothing in Chrome's viewer
+- pdf-lib embed CJK font, Japanese, Korean
+- pdf-lib form field text invisible after `setText`
+- `updateFieldAppearances` still blank with a custom font
+- pdf-lib output is several megabytes after embedding a font
+- CIDFontType0 vs CIDFontType2, `FontFile2`, the OTTO sfnt tag
+
+The Chrome-draws-nothing one is the expensive one, because text extraction and
+search both keep working — every check except looking at the page passes.
+
 ---
 
 MIT
